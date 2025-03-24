@@ -17,7 +17,6 @@ class PythonCodeGeneratorPlugin:
     def __init__(self, model_id=None):
         self.model_id = model_id or os.getenv("ANTHROPIC_MODEL_ID")
 
-        # Logger oluştur
         self.logger = SKLogger(
             name="PythonCodeGenerator",
             level=LogLevel.DEBUG,
@@ -36,6 +35,9 @@ class PythonCodeGeneratorPlugin:
 
         1. PLAN: Analyze the user's request and create a solution plan
         2. DEPENDENCIES: Identify required libraries (standard library, third-party)
+           - Freely use any Python package that would be helpful for the task
+           - The system will automatically install any missing packages
+           - Don't hesitate to use specialized libraries when appropriate
         3. CODE: Create working code and explain it
         4. TEST: Verify code works correctly, catch potential errors
         5. OPTIMIZE: Optimize code if necessary
@@ -47,20 +49,15 @@ class PythonCodeGeneratorPlugin:
         - Memory efficiency
         - Security concerns
 
-        When packages are missing:
-        - Detect required packages
-        - Install using pip install command
-        - Verify installation success
-
-        When errors occur:
-        - Analyze error message
-        - Identify error source
-        - Generate and implement solution
-        - Verify solution success
+        When using external libraries:
+        - Import all necessary libraries at the top of your code
+        - Feel free to use visualization libraries like matplotlib, seaborn, or plotly
+        - Use data processing libraries like pandas, numpy, or scipy as needed
+        - Utilize any specialized library that would make the solution more elegant
 
         Output format:
         1. Summary plan
-        2. Required packages and installation code
+        2. Required packages list
         3. Main code block
         4. Test/validation code
         5. Explanations (when needed)
@@ -75,22 +72,21 @@ class PythonCodeGeneratorPlugin:
         
         self.logger.debug(f"Creating BedrockChatCompletion with model: {self.model_id}")
         
-        # Agent kullanmak yerine doğrudan BedrockChatCompletion kullan
         self.chat_service = BedrockChatCompletion(model_id=self.model_id)
         
-        # Execution settings oluştur
         self.execution_settings = BedrockChatPromptExecutionSettings(
             max_tokens=4096,
             temperature=0.5,
         )
         
-        # Executor oluştur
         self.executor = ExecutePythonCodePlugin(
             timeout_seconds=600,
             max_output_length=4000,
             restricted_modules=["subprocess", "ctypes", "socket"],
             allow_networking=True,
             allow_file_write=True,
+            auto_install_dependencies=True,
+            use_virtual_env=True
         )
         
         self.logger.info("Python Code Generator initialized successfully")
@@ -101,33 +97,29 @@ class PythonCodeGeneratorPlugin:
     )
     async def generate_python_code(self, request: str) -> str:
         """
-        Kullanıcı isteğine göre Python kodu oluşturur.
+        Generates Python code based on user request.
         
         Args:
-            request: Kullanıcının kod isteği
+            request: User's code request
             
         Returns:
-            Oluşturulan kod ve açıklamalar
+            Generated code and explanations
         """
         self.logger.section(f"GENERATING CODE FOR: {request}", LogLevel.INFO)
         self.logger.info(f"Processing request: {request}")
         
         try:
-            # Agent yerine doğrudan chat_service.complete_chat kullan
             self.logger.debug("Sending request to chat completion service...")
             
-            # ChatHistory oluştur
             history = ChatHistory()
             history.add_system_message(self.system_prompt)
             history.add_user_message(request)
             
-            # Mesajı gönder ve yanıtı al - settings parametresi eklendi
             result = await self.chat_service.get_chat_message_content(
                 chat_history=history,
-                settings=self.execution_settings,  # Önemli: settings parametresi
+                settings=self.execution_settings,
             )
             
-            # Sonucu string'e dönüştür
             if isinstance(result, ChatMessageContent):
                 response_content = result.content
             elif isinstance(result, TextContent):
@@ -139,7 +131,6 @@ class PythonCodeGeneratorPlugin:
                 
             self.logger.debug("Received response from chat completion service")
             
-            # LLM çıktısını ayrıştır ve logla
             self._parse_and_log_llm_output(response_content, request)
             
             return response_content
@@ -158,24 +149,21 @@ class PythonCodeGeneratorPlugin:
     )
     async def generate_and_execute_code(self, request: str) -> str:
         """
-        Kullanıcı isteğine göre Python kodu oluşturur ve hemen yürütür.
+        Generates and immediately executes Python code based on user request.
         
         Args:
-            request: Kullanıcının kod isteği
+            request: User's code request
             
         Returns:
-            Kod oluşturma ve yürütme sonuçları
+            Code generation and execution results
         """
         self.logger.section(f"GENERATING AND EXECUTING CODE FOR: {request}", LogLevel.INFO)
         
-        # Asenkron fonksiyonu çağır
         generated_code = await self.generate_python_code(request)
         
-        # Hata kontrolü
         if generated_code.startswith("Error generating code:"):
             return f"Failed to generate code: {generated_code}"
         
-        # Kodu çıkar
         code_blocks = self._extract_code_blocks(generated_code)
         
         execution_results = []
@@ -199,16 +187,11 @@ class PythonCodeGeneratorPlugin:
             
         return combined_result
     
-    def _extract_code_blocks(self, text: str) -> List[str]:
-        """Markdown formatındaki metinden kod bloklarını çıkarır"""
-        import re
-        
-        # Python kod bloklarını ara
+    def _extract_code_blocks(self, text: str) -> List[str]:     
         pattern = r'```(?:python)?\s*([\s\S]*?)```'
         code_blocks = re.findall(pattern, text)
         
         if not code_blocks:
-            # Kod bloğu bulunamazsa, tüm metni kod olarak kabul et
             if "print(" in text or "import " in text:
                 return [text]
             return []
@@ -216,9 +199,6 @@ class PythonCodeGeneratorPlugin:
         return code_blocks
     
     def _parse_and_log_llm_output(self, text: str, request: str):
-        """LLM çıktısını ayrıştır ve uygun şekilde logla"""
-        
-        # Düşünme ve planlama bölümlerini bul
         thinking_match = re.search(r'THINKING:(.*?)(?=PLANNING:|```|$)', text, re.DOTALL)
         planning_match = re.search(r'PLANNING:(.*?)(?=```|$)', text, re.DOTALL)
         
@@ -231,7 +211,6 @@ class PythonCodeGeneratorPlugin:
         if planning:
             self.logger.llm_planning(planning)
         
-        # Kod bloklarını bul
         code_blocks = self._extract_code_blocks(text)
         for i, code in enumerate(code_blocks):
             if code.strip():

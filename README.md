@@ -154,6 +154,8 @@ The Python Executor Tool provides several security measures:
 - **File System Limitations**: Restrict file system operations
 - **Execution Timeouts**: Prevent infinite loops or long-running code
 - **Memory Limits**: Set maximum memory usage for code execution
+- **Auto Dependency Installation**: Automatically detect and install missing packages when needed
+- **Virtual Environment Isolation**: Run code in isolated virtual environments for added security
 
 Configure these settings when creating an ExecutePythonCodePlugin instance:
 
@@ -161,9 +163,10 @@ Configure these settings when creating an ExecutePythonCodePlugin instance:
 executor = ExecutePythonCodePlugin(
     timeout_seconds=10,
     restricted_modules=["os", "subprocess", "sys", "importlib"],
-    allow_networking=False,
+    allow_networking=True,  # Enable network for package installation
     allow_file_write=False,
-    memory_limit_mb=100
+    auto_install_dependencies=True,  # Enable auto package installation
+    use_virtual_env=True  # Use virtual environment for isolation
 )
 ```
 
