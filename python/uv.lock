@@ -450,6 +450,7 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/24/8a/e2d52d4111d3ef48e0a8b2324e80b600f6c5339dae9827744b94325a0b6a/google_crc32c-1.7.0-cp313-cp313-macosx_12_0_x86_64.whl", hash = "sha256:6a40522958040051c755a173eb98c05ad4d64a6dd898888c3e5ccca2d1cbdcdc", size = 30149 },
     { url = "https://files.pythonhosted.org/packages/da/60/8cd1605391da56c55db67ef64660e72b89787755a271ebe04f9418320b19/google_crc32c-1.7.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f714fe5cdf5007d7064c57cf7471a99e0cbafda24ddfa829117fc3baafa424f7", size = 32972 },
     { url = "https://files.pythonhosted.org/packages/3d/65/065ffe1bb324709e7704205261b429588ed17bbde8b7940eb12b140a6082/google_crc32c-1.7.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f04e58dbe1bf0c9398e603a9be5aaa09e0ba7eb022a3293195d8749459a01069", size = 32616 },
+    { url = "https://files.pythonhosted.org/packages/16/b8/95e6a189f5764abd643e3df5ab06e291d379f26ff77ea97bbcb12ac9207b/google_crc32c-1.7.0-cp313-cp313-win_amd64.whl", hash = "sha256:e545b51ddf97f604d30114f7c23eecaf4c06cd6c023ff1ae0b80dcd99af32833", size = 33496 },
     { url = "https://files.pythonhosted.org/packages/1b/30/51b10f995be9bd09551d050117c571f9749297717fcc2e7946e242eb4830/google_crc32c-1.7.0-cp313-cp313t-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:364067b063664dd8d1fec75a3fe85edf05c46f688365269beccaf42ef5dfe889", size = 33080 },
     { url = "https://files.pythonhosted.org/packages/4d/ec/a7ca773559c7ab6919ac0255d84c74571c8cecf0e8891036705f6861c04d/google_crc32c-1.7.0-cp313-cp313t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e1b0d6044799f6ac51d1cc2decb997280a83c448b3bef517a54b57a3b71921c0", size = 32708 },
 ]
@@ -1153,6 +1154,7 @@ dependencies = [
     { name = "isort" },
     { name = "python-dotenv" },
     { name = "semantic-kernel" },
+    { name = "setuptools" },
     { name = "tavily-python" },
 ]
 
@@ -1164,6 +1166,7 @@ requires-dist = [
     { name = "isort", specifier = ">=6.0.1" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "semantic-kernel", specifier = ">=1.25.0" },
+    { name = "setuptools", specifier = ">=78.0.2" },
     { name = "tavily-python", specifier = ">=0.5.1" },
 ]
 
@@ -1358,6 +1361,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/87/e5/a16304a14a43149f38d72a0c6360c1fab991cac8357f700e4c355808f59d/semantic_kernel-1.25.0.tar.gz", hash = "sha256:58abe3963fb53443215d5c0230b1a72c2a8f50071dba9cb2291d06b46c350ace", size = 451283 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7a/e6/eae9af355ef3c67d8bbb14793f4336f8592bdf400518ffd2274d0596036c/semantic_kernel-1.25.0-py3-none-any.whl", hash = "sha256:6334d84c3664a4a53bea9cb54f5282d6de79274edfba1a23702d8d282e5f0bbe", size = 775874 },
+]
+
+[[package]]
+name = "setuptools"
+version = "78.0.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/4c/f4/aa8d364f0dc1f33b2718938648c31202e2db5cd6479a73f0a9ca5a88372d/setuptools-78.0.2.tar.gz", hash = "sha256:137525e6afb9022f019d6e884a319017f9bf879a0d8783985d32cbc8683cab93", size = 1367747 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/aa/db/2fd473dfe436ad19fda190f4079162d400402aedfcc41e048d38c0a375c6/setuptools-78.0.2-py3-none-any.whl", hash = "sha256:4a612c80e1f1d71b80e4906ce730152e8dec23df439f82731d9d0b608d7b700d", size = 1255965 },
 ]
 
 [[package]]

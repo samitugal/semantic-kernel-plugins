@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "semantic-kernel-tools"
+version = "0.1.0"
+description = "Ready-to-use plugins and tools for Semantic Kernel"
+readme = "README.md"
+authors = [
+    {name = "Sami Tugal", email = "tugalsami@gmail.com"},
+]
+license = {text = "MIT"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "semantic-kernel>=1.0.0",
+    "python-dotenv>=1.0.0",
+    "tavily-python>=0.5.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/samitugal/semantic-kernel-tools"
+"Bug Tracker" = "https://github.com/samitugal/semantic-kernel-tools/issues"
+
+[tool.setuptools]
+packages = ["semantic_kernel_tools"]
