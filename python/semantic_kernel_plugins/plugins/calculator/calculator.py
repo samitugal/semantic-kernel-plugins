@@ -2,11 +2,14 @@ import math
 from typing import Optional
 
 from semantic_kernel.functions import kernel_function
+from semantic_kernel_plugins.logger.sk_logger import SKLogger
 
 class CalculatorPlugin:
     def __init__(self):
         self.name = "calculator"
         self.description = "A plugin for performing calculations"
+        self.logger = SKLogger(name="Calculator")
+        self.logger.info("CALCULATOR PLUGIN INITIALIZED")
 
     @kernel_function(
         description="Add two numbers",
@@ -23,6 +26,7 @@ class CalculatorPlugin:
         Returns:
             The sum of the two numbers.
         """
+        self.logger.info(f"Adding {a} and {b}")
         return a + b
     
     @kernel_function(
@@ -40,6 +44,7 @@ class CalculatorPlugin:
         Returns:
             The result of the subtraction.
         """
+        self.logger.info(f"Subtracting {b} from {a}")
         return a - b
     
     @kernel_function(
@@ -57,6 +62,7 @@ class CalculatorPlugin:
         Returns:
             The product of the two numbers.
         """
+        self.logger.info(f"Multiplying {a} and {b}")
         return a * b
     
     @kernel_function(
@@ -74,7 +80,7 @@ class CalculatorPlugin:
         Returns:
             The result of the division.
         """
-
+        self.logger.info(f"Dividing {a} by {b}")
         if b == 0:
             return "Error: Division by zero"
         return a / b
@@ -93,6 +99,7 @@ class CalculatorPlugin:
         Returns:    
             The square of the number.
         """
+        self.logger.info(f"Squaring {a}")
         return a * a
     
     @kernel_function(
@@ -109,6 +116,7 @@ class CalculatorPlugin:
         Returns:
             The square root of the number.
         """
+        self.logger.info(f"Calculating square root of {a}")
         if a < 0:
             return "Error: Cannot calculate square root of negative number"
         return math.sqrt(a)
@@ -127,6 +135,7 @@ class CalculatorPlugin:
         Returns:
             The cube of the number.
         """
+        self.logger.info(f"Calculating cube of {a}")
         return a * a * a
     
     @kernel_function(
@@ -144,6 +153,7 @@ class CalculatorPlugin:
         Returns:
             The result of the power calculation.
         """
+        self.logger.info(f"Calculating {base} to the power of {exponent}")
         return base ** exponent
     
     @kernel_function(
@@ -161,6 +171,7 @@ class CalculatorPlugin:
         Returns:
             The result of the logarithm calculation.
         """
+        self.logger.info(f"Calculating logarithm of {a} with base {base}")
         if base is None:
             return math.log(a)
         return math.log(a, base)
@@ -179,6 +190,7 @@ class CalculatorPlugin:
         Returns:
             The sine of the number.
         """
+        self.logger.info(f"Calculating sine of {a}")
         return math.sin(a)
     
     @kernel_function(
@@ -195,6 +207,7 @@ class CalculatorPlugin:
         Returns:
             The cosine of the number.
         """
+        self.logger.info(f"Calculating cosine of {a}")
         return math.cos(a)
     
     @kernel_function(
@@ -211,6 +224,7 @@ class CalculatorPlugin:
         Returns:
             The tangent of the number.
         """
+        self.logger.info(f"Calculating tangent of {a}")
         return math.tan(a)
     
     @kernel_function(
@@ -227,6 +241,7 @@ class CalculatorPlugin:
         Returns:
             The factorial of the number.
         """
+        self.logger.info(f"Calculating factorial of {a}")
         if a < 0:
             return "Error: Cannot calculate factorial of negative number"
         return math.factorial(a)
@@ -245,6 +260,7 @@ class CalculatorPlugin:
         Returns:
             The absolute value of the number.
         """
+        self.logger.info(f"Calculating absolute value of {a}")
         return abs(a)
     
 
