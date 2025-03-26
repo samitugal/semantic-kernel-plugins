@@ -41,3 +41,5 @@ logs/
 
 # OS specific
 .DS_Store
+
+test.py
