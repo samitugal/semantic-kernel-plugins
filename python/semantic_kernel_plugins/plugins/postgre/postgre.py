@@ -4,7 +4,7 @@ from semantic_kernel.functions import kernel_function
 from semantic_kernel_plugins.logger.sk_logger import SKLogger
 
 try:
-    from psycopg2 import connect
+    from psycopg2 import connect # type: ignore
 except ImportError:
     raise ImportError("psycopg2 is not installed. Please install it with 'pip install psycopg2'.")
 
