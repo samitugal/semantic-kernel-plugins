@@ -59,7 +59,7 @@ def publish_to_pypi():
             print("Test PyPI upload successful!")
             print("You can install the test package with:")
             print(
-                "pip install --index-url https://test.pypi.org/simple/ semantic_kernel_tools"
+                "pip install --index-url https://test.pypi.org/simple/ semantic_kernel_plugins"
             )
 
         # Real PyPI upload
@@ -71,7 +71,7 @@ def publish_to_pypi():
             subprocess.check_call([sys.executable, "-m", "twine", "upload", "dist/*"])
             print("PyPI upload successful!")
             print("The package can now be installed with:")
-            print("pip install semantic_kernel_tools")
+            print("pip install semantic_kernel_plugins")
 
     except subprocess.CalledProcessError as e:
         print(f"Error during upload: {e}")

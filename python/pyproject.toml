@@ -3,8 +3,8 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "semantic-kernel-tools"
-version = "0.1.0"
+name = "semantic-kernel-plugins"
+version = "0.1.1"
 description = "Ready-to-use plugins and tools for Semantic Kernel"
 readme = "README.md"
 authors = [
@@ -24,8 +24,8 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/samitugal/semantic-kernel-tools"
-"Bug Tracker" = "https://github.com/samitugal/semantic-kernel-tools/issues"
+"Homepage" = "https://github.com/samitugal/semantic-kernel-plugins"
+"Bug Tracker" = "https://github.com/samitugal/semantic-kernel-plugins/issues"
 
 [tool.setuptools]
-packages = ["semantic_kernel_tools"]
+packages = ["semantic_kernel_plugins"]

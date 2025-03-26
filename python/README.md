@@ -40,7 +40,7 @@ from semantic_kernel import Kernel
 from semantic_kernel.connectors.ai.bedrock import BedrockChatCompletion
 from dotenv import load_dotenv
 
-from semantic_kernel_tools import SKLogger, LogLevel, PythonCodeGeneratorPlugin, TavilySearchPlugin
+from semantic_kernel_plugins import SKLogger, LogLevel, PythonCodeGeneratorPlugin, TavilySearchPlugin
 
 async def main():
     # Load environment variables

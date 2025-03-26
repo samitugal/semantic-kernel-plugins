@@ -12,9 +12,9 @@ from semantic_kernel.connectors.ai.function_choice_behavior import \
 from semantic_kernel.contents.chat_history import ChatHistory
 from semantic_kernel.utils.logging import setup_logging
 
-from semantic_kernel_tools.plugins.python.python_code_generator import \
+from semantic_kernel_plugins.plugins.python.python_code_generator import \
     PythonCodeGeneratorPlugin
-from semantic_kernel_tools.plugins.web.tavily_web_search import \
+from semantic_kernel_plugins.plugins.web.tavily_web_search import \
     TavilySearchPlugin
 
 load_dotenv()

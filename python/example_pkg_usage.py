@@ -5,17 +5,19 @@ Semantic Kernel Tools Package Usage Example
 
 def main():
     try:
-        import semantic_kernel_tools
+        import semantic_kernel_plugins
 
-        print("Semantic Kernel Tools successfully imported!")
-        print(f"Version: {semantic_kernel_tools.__version__}")
+        print("Semantic Kernel Plugins successfully imported!")
+        print(f"Version: {semantic_kernel_plugins.__version__}")
 
         # Create logger
-        logger = semantic_kernel_tools.SKLogger(name="TestLogger", use_ascii_emoji=True)
+        logger = semantic_kernel_plugins.SKLogger(
+            name="TestLogger", use_ascii_emoji=True
+        )
         logger.info("Logger successfully initialized")
 
         # Create Python executor
-        executor = semantic_kernel_tools.ExecutePythonCodePlugin(
+        executor = semantic_kernel_plugins.ExecutePythonCodePlugin(
             timeout_seconds=10, allow_networking=True
         )
 
@@ -31,8 +33,8 @@ def main():
         print(result)
 
     except ImportError:
-        print("Semantic Kernel Tools package not found!")
-        print("To install: pip install semantic_kernel_tools")
+        print("Semantic Kernel Plugins package not found!")
+        print("To install: pip install semantic_kernel_plugins")
 
     except Exception as e:
         print(f"Error occurred: {e}")

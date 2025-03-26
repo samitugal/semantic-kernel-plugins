@@ -4,7 +4,7 @@ import sys
 
 
 def install_package_in_dev_mode():
-    print("Paketi geliştirme modunda yüklüyorum...")
+    print("Installing the package in development mode...")
 
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -12,12 +12,12 @@ def install_package_in_dev_mode():
         subprocess.check_call(
             [sys.executable, "-m", "pip", "install", "-e", current_dir]
         )
-        print("Kurulum başarılı! Paket geliştirme modunda yüklendi.")
+        print("Successfully installed the package in development mode.")
         print(
-            "Artık notebooklarda şu şekilde import edebilirsiniz: import semantic_kernel_tools"
+            "Now you can import the package in your notebooks with: import semantic_kernel_plugins"
         )
     except subprocess.CalledProcessError as e:
-        print(f"Kurulum hatası: {e}")
+        print(f"Installation error: {e}")
         sys.exit(1)
 
 

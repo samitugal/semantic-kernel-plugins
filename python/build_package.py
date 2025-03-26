@@ -15,7 +15,7 @@ def build_package():
     # Clean previous build files
     dist_dir = os.path.join(current_dir, "dist")
     build_dir = os.path.join(current_dir, "build")
-    egg_dir = os.path.join(current_dir, "semantic_kernel_tools.egg-info")
+    egg_dir = os.path.join(current_dir, "semantic_kernel_plugins.egg-info")
 
     for dir_path in [dist_dir, build_dir, egg_dir]:
         if os.path.exists(dir_path):
@@ -92,7 +92,7 @@ def install_package():
                     ]
                 )
                 print("Package successfully installed!")
-                print("You can now use 'import semantic_kernel_tools' in any project.")
+                print("You can now use 'import semantic_kernel_plugins' in any project.")
             except subprocess.CalledProcessError as e:
                 print(f"Error during installation: {e}")
         else:
