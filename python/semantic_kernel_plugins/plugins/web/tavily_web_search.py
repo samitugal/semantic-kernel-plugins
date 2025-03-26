@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Literal, Optional, Union
 import requests
 from semantic_kernel.functions import kernel_function
 from semantic_kernel.functions.kernel_arguments import KernelArguments
+from semantic_kernel_plugins.logger import SKLogger
 
 try:
     from tavily import TavilyClient
@@ -26,6 +27,7 @@ class TavilySearchPlugin:
         search_depth: Literal["basic", "advanced"] = "advanced",
         format: Literal["json", "markdown"] = "markdown",
         max_results: int = 5,
+        logger: Optional[SKLogger] = None,
     ):
         """
         Initialize the Tavily search tool.
@@ -38,6 +40,7 @@ class TavilySearchPlugin:
             search_depth: Search depth ("basic" or "advanced")
             format: Response format ("json" or "markdown")
             max_results: Maximum number of results to return in detailed mode
+            logger: Logger instance for logging search results
         """
         # Initialize basic properties
         self._name = "tavily_search"
@@ -56,54 +59,15 @@ class TavilySearchPlugin:
         self.format = format
         self.max_results = max_results
 
-    @property
-    def name(self) -> str:
-        """Get the name of the tool"""
-        return self._name
+        # Add logger parameter
+        self.logger = logger or SKLogger(name="TavilySearch")
 
-    @property
-    def description(self) -> str:
-        """Get the description of the tool"""
-        if self._search_mode == "detailed":
-            return "Search the web for information and return structured results"
-        else:
-            return "Search the web for information and return raw context"
-
-    @property
-    def input_schema(self) -> Dict[str, Any]:
-        """Get the input schema for the tool"""
-        if self._search_mode == "detailed":
-            return {
-                "type": "object",
-                "properties": {
-                    "query": {
-                        "type": "string",
-                        "description": "The search query to look up on the web",
-                    },
-                    "max_results": {
-                        "type": "integer",
-                        "description": "Maximum number of results to return (optional)",
-                    },
-                },
-                "required": ["query"],
-            }
-        else:
-            return {
-                "type": "object",
-                "properties": {
-                    "query": {
-                        "type": "string",
-                        "description": "The search query to look up on the web",
-                    }
-                },
-                "required": ["query"],
-            }
 
     @kernel_function(
         description="Search for information on the web with Tavily API",
         name="web_search",
     )
-    def search(self, query: str) -> str:
+    async def search(self, query: str) -> str:
         """
         Search for information on the web with Tavily.
 
@@ -113,31 +77,25 @@ class TavilySearchPlugin:
         Returns:
             The search results.
         """
-        client = TavilyClient(api_key=self.api_key)
-        response = client.search(
-            query=query,
-            search_depth=self.search_depth,
-            include_answer=self.include_answer,
-            include_images=False,
-            max_tokens=self.max_tokens,
-            search_mode=self._search_mode,
-        )
-
-        if self.format == "json":
-            return json.dumps(response)
-        else:
-            markdown = "# Search Results\n\n"
-            if "answer" in response and response["answer"]:
-                markdown += f"## Answer\n\n{response['answer']}\n\n"
-
-            markdown += "## Sources\n\n"
-            for i, result in enumerate(response.get("results", [])[: self.max_results]):
-                title = result.get("title", "No Title")
-                url = result.get("url", "")
-                content = result.get("content", "No Content")
-                markdown += f"{i+1}. **[{title}]({url})**\n   {content}\n\n"
-
-            return markdown
+        try:
+            results = self.client.search(
+                query=query,
+                search_depth=self.search_depth,
+                max_tokens=self.max_tokens,
+                include_answer=self.include_answer,
+            )
+            
+            self.logger.log_search_results(query, results.get('results', []))
+            
+            if self.format == "json":
+                return json.dumps(results, indent=2)
+            else:
+                # Format results as markdown
+                return self._format_results_markdown(results)
+                
+        except Exception as e:
+            self.logger.log_search_results(query, [], success=False)
+            return f"Search failed: {str(e)}"
 
     def search_detailed(self, query: str, max_results: Optional[int] = None) -> str:
         """
@@ -269,5 +227,28 @@ class TavilySearchPlugin:
                 markdown += f"{result['content']}\n\n"
         else:
             markdown += "No results found."
+
+        return markdown
+
+    def _format_results_markdown(self, results: Dict[str, Any]) -> str:
+        """
+        Format search results as markdown.
+
+        Args:
+            results: The raw search results from Tavily API
+
+        Returns:
+            Markdown formatted string
+        """
+        markdown = "# Search Results\n\n"
+        if "answer" in results and results["answer"]:
+            markdown += f"## Answer\n\n{results['answer']}\n\n"
+
+        markdown += "## Sources\n\n"
+        for i, result in enumerate(results.get("results", [])[: self.max_results]):
+            title = result.get("title", "No Title")
+            url = result.get("url", "")
+            content = result.get("content", "No Content")
+            markdown += f"{i+1}. **[{title}]({url})**\n   {content}\n\n"
 
         return markdown

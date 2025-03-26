@@ -1,4 +1,4 @@
-# Semantic Kernel Ready to Use Tools
+# Semantic Kernel Ready to Use Plugins
 
 ![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![License MIT](https://img.shields.io/badge/License-MIT-green)
@@ -28,55 +28,72 @@ Semantic Kernel Tools provides a set of powerful plugins for the Semantic Kernel
 ## 📥 Installation
 
 ```bash
-pip install semantic-kernel-tools
+pip install semantic-kernel-plugins
 ```
 
 ## 🚀 Quick Start
 
 ```python
 import asyncio
+import logging
 import os
+
+from dotenv import load_dotenv
 from semantic_kernel import Kernel
 from semantic_kernel.connectors.ai.bedrock import BedrockChatCompletion
-from dotenv import load_dotenv
+from semantic_kernel.connectors.ai.bedrock.bedrock_prompt_execution_settings import \
+    BedrockChatPromptExecutionSettings
+from semantic_kernel.connectors.ai.function_choice_behavior import \
+    FunctionChoiceBehavior
+from semantic_kernel.contents.chat_history import ChatHistory
+from semantic_kernel.utils.logging import setup_logging
 
-from semantic_kernel_plugins import SKLogger, LogLevel, PythonCodeGeneratorPlugin, TavilySearchPlugin
+from semantic_kernel_plugins.plugins.python.python_code_generator import \
+    PythonCodeGeneratorPlugin
+from semantic_kernel_plugins.plugins.web.tavily_web_search import \
+    TavilySearchPlugin
 
 async def main():
-    # Load environment variables
-    load_dotenv()
-    
-    # Create a new kernel
     kernel = Kernel()
-    
-    # Add Bedrock service
-    kernel.add_service(
-        BedrockChatCompletion(model_id=os.getenv("ANTHROPIC_MODEL_ID"))
+
+    chat_completion = BedrockChatCompletion(
+        model_id=os.getenv("ANTHROPIC_MODEL_ID"),
     )
-    
-    # Create logger
-    logger = SKLogger(name="SKDemo", level=LogLevel.INFO)
-    
-    # Add Python Code Generator plugin
-    python_generator = PythonCodeGeneratorPlugin()
+    kernel.add_service(chat_completion)
+
+    setup_logging()
+    logging.getLogger("kernel").setLevel(logging.INFO)
+
+    ## Ready to use plugins - Tavily Web Search
+    kernel.add_plugin(
+        TavilySearchPlugin(os.getenv("TAVILY_API_KEY")),
+        plugin_name="TavilyWebSearch",
+    )
+
+    ## Ready to use plugins - Python Code Generator
+    execution_settings = BedrockChatPromptExecutionSettings(
+        max_tokens=4096,
+        temperature=0.5,
+    )
+    execution_settings.function_choice_behavior = FunctionChoiceBehavior.Auto()
+
+    python_generator = PythonCodeGeneratorPlugin(
+        chat_service=chat_completion, execution_settings=execution_settings
+    )
     kernel.add_plugin(python_generator, plugin_name="PythonCodeGenerator")
-    
-    # Add Tavily Web Search plugin
-    tavily_search = TavilySearchPlugin(api_key=os.getenv("TAVILY_API_KEY"))
-    kernel.add_plugin(tavily_search, plugin_name="TavilyWebSearch")
-    
-    # Use the plugins
-    code_request = "Create a function to calculate the factorial of a number and then compute 10!"
-    search_request = "What are the latest developments in quantum computing?"
-    
-    logger.section("EXECUTING CODE")
-    code_result = await python_generator.generate_and_execute_code(code_request)
-    
-    logger.section("WEB SEARCH")
-    search_result = await tavily_search.search(search_request)
-    
-    print(code_result)
-    print(search_result)
+
+    history = ChatHistory()
+
+    userInput = "<Your Request>"
+
+    history.add_user_message(userInput)
+    result = await chat_completion.get_chat_message_content(
+        chat_history=history,
+        settings=execution_settings,
+        kernel=kernel,
+    )
+    print("\033[1m\033[34mAssistant > \033[0m" + str(result))
+    history.add_message(result)
 
 if __name__ == "__main__":
     asyncio.run(main())
