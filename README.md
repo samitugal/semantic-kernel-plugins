@@ -9,16 +9,17 @@ A collection of ready-to-use plugins for Microsoft's Semantic Kernel framework t
 
 Semantic Kernel Plugins provides a set of powerful, production-ready plugins for the Semantic Kernel Framework, eliminating the need to write your own plugins from scratch:
 
-* **PostgreSQL Plugin**: Connect and interact with PostgreSQL databases
-* **Shell Plugin**: Execute system commands across different operating systems
-* **Web Search Plugin**: Integrate Tavily search API for web search capabilities
+* **PostgreSQL Plugin**: Connect and interact with PostgreSQL databases with ease
+* **MongoDB Plugin**: Use MongoDB databases directly in your AI workflows
+* **Shell Plugin**: Execute system commands safely across different operating systems
+* **Web Search Plugins**: Choose from multiple search providers (Tavily, Google, SerpAPI)
 * **Python Code Generator**: Generate and execute Python code safely
 
 ## ✨ Features
 
-* **Database Integration**: Execute queries, fetch data, and manage PostgreSQL databases
-* **System Command Execution**: Run shell commands with proper handling for Windows, Linux, and macOS
-* **Web Search Integration**: Search the web using Tavily API with rich result formatting
+* **Multiple Database Integrations**: Connect to PostgreSQL and MongoDB databases
+* **Cross-Platform Shell Operations**: Run system commands with proper handling for Windows, Linux, and macOS
+* **Multi-Provider Web Search**: Choose from Tavily, Google Search, or SerpAPI for web searches
 * **Python Code Generation and Execution**: Generate and execute Python code in a controlled environment
 * **Enhanced Logging**: Track operations with detailed, colorful logs
 * **Cross-Platform Compatibility**: Works seamlessly across Windows, Linux, and macOS
@@ -36,13 +37,14 @@ pip install semantic-kernel-plugins
 
 ## 🚀 Quick Start
 
-### PostgreSQL Plugin
+### Database Plugins
+
+#### PostgreSQL Plugin
 
 ```python
 import os
 from dotenv import load_dotenv
 from semantic_kernel import Kernel
-from semantic_kernel.connectors.ai.bedrock import BedrockChatCompletion
 from psycopg2 import connect
 from semantic_kernel_plugins.plugins.postgre import PostgrePlugin
 
@@ -61,8 +63,41 @@ kernel.add_plugin(
     plugin_name="PostgreSQL"
 )
 
-# Now you can use the plugin in your AI workflows
-# Example: kernel.plugins["PostgreSQL"].execute_query("SELECT * FROM users")
+# Example usage
+# Execute SQL queries directly from your AI workflows
+result = kernel.plugins["PostgreSQL"].execute_query("SELECT * FROM users")
+
+# Get table schemas
+tables = kernel.plugins["PostgreSQL"].fetch_table_names()
+schema = kernel.plugins["PostgreSQL"].fetch_table_schema("users")
+```
+
+#### MongoDB Plugin
+
+```python
+from pymongo import MongoClient
+from semantic_kernel import Kernel
+from semantic_kernel_plugins.plugins.mongodb import MongoDBPlugin
+
+# Initialize MongoDB client
+client = MongoClient("mongodb://localhost:27017/")
+
+# Create kernel and add plugin
+kernel = Kernel()
+kernel.add_plugin(
+    MongoDBPlugin(client),
+    plugin_name="MongoDB"
+)
+
+# Example usage
+# Check if database exists
+exists = kernel.plugins["MongoDB"].database_exists("mydatabase")
+
+# List all collections in a database
+collections = kernel.plugins["MongoDB"].list_collections("mydatabase")
+
+# Get database statistics
+stats = kernel.plugins["MongoDB"].get_database_stats("mydatabase")
 ```
 
 ### Shell Plugin
@@ -78,50 +113,128 @@ kernel.add_plugin(
     plugin_name="Shell"
 )
 
-# Now you can execute shell commands
-# Example: kernel.plugins["Shell"].execute_shell_command("ls -la")
+# Execute shell commands safely across platforms
+result = kernel.plugins["Shell"].execute_shell_command("ls -la")
+
+# You can also pass a list of arguments
+result = kernel.plugins["Shell"].execute_shell_command(["python", "-c", "print('Hello from Python!')"])
 ```
 
-### Web Search Plugin
+### Web Search Plugins
+
+#### Tavily Search Plugin
 
 ```python
 import os
-from dotenv import load_dotenv
 from semantic_kernel import Kernel
 from semantic_kernel_plugins.plugins.web.tavily_web_search import TavilySearchPlugin
 from semantic_kernel_plugins.logger.sk_logger import SKLogger
 
-# Setup logger
-logger = SKLogger(name="MyApp")
+# Setup logger for detailed search result tracking
+logger = SKLogger(name="SearchApp")
 
 # Create kernel and add web search plugin
 kernel = Kernel()
 kernel.add_plugin(
     TavilySearchPlugin(
         api_key=os.getenv("TAVILY_API_KEY"),
+        search_depth="advanced",
+        include_answer=True,
         logger=logger
     ),
-    plugin_name="WebSearch"
+    plugin_name="TavilySearch"
 )
 
-# Now you can search the web
-# Example: kernel.plugins["WebSearch"].search("latest developments in AI")
+# Search the web with detailed results
+results = kernel.plugins["TavilySearch"].search("latest advancements in quantum computing")
+```
+
+#### SerpAPI Search Plugin
+
+```python
+import os
+from semantic_kernel import Kernel
+from semantic_kernel_plugins.plugins.web import SerpApiWebSearchPlugin
+
+# Create kernel and add SerpAPI search plugin
+kernel = Kernel()
+kernel.add_plugin(
+    SerpApiWebSearchPlugin(
+        api_key=os.getenv("SERPAPI_API_KEY"),
+        engine="google",
+        include_news=True  # Get additional news results
+    ),
+    plugin_name="SerpApiSearch"
+)
+
+# Search the web with Google via SerpAPI
+results = kernel.plugins["SerpApiSearch"].search("current global economic trends")
+```
+
+#### Google Search Plugin
+
+```python
+from semantic_kernel import Kernel
+from semantic_kernel_plugins.plugins.web import GoogleSearchPlugin
+
+# Create kernel and add Google search plugin
+kernel = Kernel()
+kernel.add_plugin(
+    GoogleSearchPlugin(
+        max_results=10,
+        advanced=True
+    ),
+    plugin_name="GoogleSearch"
+)
+
+# Search the web directly with Google
+results = kernel.plugins["GoogleSearch"].google_search("best practices for cloud security")
 ```
 
 ## 📦 Available Plugins
 
 | Plugin | Description |
 |--------|-------------|
-| PostgrePlugin | Interact with PostgreSQL databases |
-| ShellPlugin | Execute shell commands across different platforms |
-| TavilySearchPlugin | Search the web using Tavily API |
-| PythonCodeGeneratorPlugin | Generate and execute Python code |
+| **Database Plugins** |
+| PostgrePlugin | Execute queries and manage PostgreSQL databases |
+| MongoDBPlugin | Interact with MongoDB databases and collections |
+| **System Plugins** |
+| ShellPlugin | Execute shell commands across different platforms safely |
+| **Web Search Plugins** |
+| TavilySearchPlugin | AI-powered search with summarization via Tavily |
+| SerpApiWebSearchPlugin | Comprehensive search results via SerpAPI (Google) |
+| GoogleSearchPlugin | Direct Google search integration |
+| **Development Plugins** |
+| PythonCodeGeneratorPlugin | Generate and execute Python code safely |
 | CalculatorPlugin | Perform mathematical calculations |
+
+## 🔍 Detailed Plugin Features
+
+### PostgreSQL Plugin
+- Execute arbitrary SQL queries
+- Fetch table names and schemas
+- Insert, update, and delete data
+- Create and drop tables
+
+### MongoDB Plugin
+- List databases and collections
+- Check if databases or collections exist
+- Get database and collection statistics
+
+### Shell Plugin
+- Cross-platform command execution
+- Safe handling of command arguments
+- Proper error reporting and logging
+
+### Web Search Plugins
+- Multiple search providers for different needs
+- Configurable result formatting (markdown or JSON)
+- Rich search results with titles, snippets, and URLs
+- Advanced options for specialized searches (news, images, etc.)
 
 ## 🔜 Coming Soon
 
 * .NET Plugins
-* MongoDB Plugin
 * SQLite Plugin
 * File System Plugin
 * More Cloud Service Integrations
