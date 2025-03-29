@@ -12,11 +12,7 @@ import uuid
 from typing import Any, Dict, List, Optional, Tuple
 
 from dotenv import load_dotenv
-from semantic_kernel.agents.chat_completion.chat_completion_agent import \
-    ChatCompletionAgent
-from semantic_kernel.connectors.ai.bedrock import BedrockChatCompletion
 from semantic_kernel.functions import kernel_function
-from semantic_kernel.functions.kernel_arguments import KernelArguments
 
 load_dotenv()
 
