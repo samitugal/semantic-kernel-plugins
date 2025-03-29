@@ -1,12 +1,16 @@
-from typing import Optional, List
+from typing import List, Optional
 
 from semantic_kernel.functions import kernel_function
+
 from semantic_kernel_plugins.logger.sk_logger import SKLogger
 
 try:
     from pymongo import MongoClient
 except ImportError:
-    raise ImportError("pymongo is not installed. Please install it with 'pip install pymongo'.")
+    raise ImportError(
+        "pymongo is not installed. Please install it with 'pip install pymongo'."
+    )
+
 
 class MongoDBPlugin:
     def __init__(self, client: MongoClient):
@@ -22,7 +26,7 @@ class MongoDBPlugin:
         self.logger.info(f"Creating database: {database}")
         self.client[database]
         return f"Database {database} created successfully"
-    
+
     @kernel_function(
         description="Drop a database",
         name="drop_database",
@@ -31,7 +35,7 @@ class MongoDBPlugin:
         self.logger.info(f"Dropping database: {database}")
         self.client.drop_database(database)
         return f"Database {database} dropped successfully"
-    
+
     @kernel_function(
         description="Use a database",
         name="use_database",
@@ -40,7 +44,7 @@ class MongoDBPlugin:
         self.logger.info(f"Using database: {database}")
         self.client = self.client[database]
         return f"Database {database} used successfully"
-    
+
     @kernel_function(
         description="Create a new collection",
         name="create_collection",
@@ -49,7 +53,7 @@ class MongoDBPlugin:
         self.logger.info(f"Creating collection: {collection}")
         self.client[database].create_collection(collection)
         return f"Collection {collection} created successfully"
-    
+
     @kernel_function(
         description="Drop a collection",
         name="drop_collection",
@@ -95,7 +99,9 @@ class MongoDBPlugin:
         name="collection_exists",
     )
     def collection_exists(self, database: str, collection: str) -> bool:
-        self.logger.info(f"Checking if collection exists: {collection} in database: {database}")
+        self.logger.info(
+            f"Checking if collection exists: {collection} in database: {database}"
+        )
         if not self.database_exists(database):
             return False
         result = collection in self.client[database].list_collection_names()
@@ -117,17 +123,21 @@ class MongoDBPlugin:
         name="get_collection_stats",
     )
     def get_collection_stats(self, database: str, collection: str) -> dict:
-        self.logger.info(f"Getting collection stats: {collection} in database: {database}")
+        self.logger.info(
+            f"Getting collection stats: {collection} in database: {database}"
+        )
         result = self.client[database].command("collStats", collection)
         self.logger.info(f"Collection stats: {result}")
         return result
-    
+
     @kernel_function(
         description="Find collection with client",
         name="find_collection",
     )
     def find_collection(self, database: str, collection_name: str) -> bool:
-        self.logger.info(f"Finding collection: {collection_name} in database: {database}")
+        self.logger.info(
+            f"Finding collection: {collection_name} in database: {database}"
+        )
         collections = self.client[database].list_collection_names()
         self.logger.info(f"Collections: {collections}")
         return collection_name in collections
@@ -142,7 +152,6 @@ class MongoDBPlugin:
         self.logger.info(f"Document inserted: {document}")
         return "Document inserted successfully"
 
-
     @kernel_function(
         description="Find a document in the collection",
         name="find_document",
@@ -152,17 +161,19 @@ class MongoDBPlugin:
         result = self.client[database][collection].find_one(query)
         self.logger.info(f"Document found: {result}")
         return result
-    
+
     @kernel_function(
         description="Update a document in the collection",
         name="update_document",
     )
-    def update_document(self, query: dict, update: dict, database: str, collection: str) -> str:
+    def update_document(
+        self, query: dict, update: dict, database: str, collection: str
+    ) -> str:
         self.logger.info(f"Updating document: {query} with {update}")
         result = self.client[database][collection].update_one(query, update)
         self.logger.info(f"Document updated: {result}")
         return result
-    
+
     @kernel_function(
         description="Delete a document from the collection",
         name="delete_document",
@@ -172,7 +183,7 @@ class MongoDBPlugin:
         result = self.client[database][collection].delete_one(query)
         self.logger.info(f"Document deleted: {result}")
         return result
-    
+
     @kernel_function(
         description="Count documents in the collection",
         name="count_documents",
@@ -182,7 +193,7 @@ class MongoDBPlugin:
         result = self.client[database][collection].count_documents({})
         self.logger.info(f"Document count: {result}")
         return result
-    
+
     @kernel_function(
         description="Get all documents from the collection",
         name="get_all_documents",
@@ -192,7 +203,7 @@ class MongoDBPlugin:
         result = list(self.client[database][collection].find())
         self.logger.info(f"Documents: {result}")
         return result
-    
+
     @kernel_function(
         description="Get a single document from the collection",
         name="get_single_document",
@@ -202,7 +213,7 @@ class MongoDBPlugin:
         result = self.client[database][collection].find_one(query)
         self.logger.info(f"Document: {result}")
         return result
-    
+
     @kernel_function(
         description="Get the first document from the collection",
         name="get_first_document",
@@ -212,7 +223,7 @@ class MongoDBPlugin:
         result = self.client[database][collection].find_one()
         self.logger.info(f"Document: {result}")
         return result
-    
+
     @kernel_function(
         description="Get the last document from the collection",
         name="get_last_document",
@@ -222,4 +233,3 @@ class MongoDBPlugin:
         result = self.client[database][collection].find_one()
         self.logger.info(f"Document: {result}")
         return result
-    

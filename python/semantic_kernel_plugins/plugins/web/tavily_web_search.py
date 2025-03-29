@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Literal, Optional, Union
 import requests
 from semantic_kernel.functions import kernel_function
 from semantic_kernel.functions.kernel_arguments import KernelArguments
+
 from semantic_kernel_plugins.logger import SKLogger
 
 try:
@@ -62,7 +63,6 @@ class TavilySearchPlugin:
         # Add logger parameter
         self.logger = logger or SKLogger(name="TavilySearch")
 
-
     @kernel_function(
         description="Search for information on the web with Tavily API",
         name="web_search",
@@ -84,15 +84,15 @@ class TavilySearchPlugin:
                 max_tokens=self.max_tokens,
                 include_answer=self.include_answer,
             )
-            
-            self.logger.log_search_results(query, results.get('results', []))
-            
+
+            self.logger.log_search_results(query, results.get("results", []))
+
             if self.format == "json":
                 return json.dumps(results, indent=2)
             else:
                 # Format results as markdown
                 return self._format_results_markdown(results)
-                
+
         except Exception as e:
             self.logger.log_search_results(query, [], success=False)
             return f"Search failed: {str(e)}"

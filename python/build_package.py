@@ -92,7 +92,9 @@ def install_package():
                     ]
                 )
                 print("Package successfully installed!")
-                print("You can now use 'import semantic_kernel_plugins' in any project.")
+                print(
+                    "You can now use 'import semantic_kernel_plugins' in any project."
+                )
             except subprocess.CalledProcessError as e:
                 print(f"Error during installation: {e}")
         else:

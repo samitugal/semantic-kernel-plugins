@@ -23,6 +23,7 @@ class LogLevel(Enum):
         self.level_num = level_num
         self.color_code = color_code
 
+
 class SKLogger:
     """
     Logger class for Semantic-Kernel-Plugins
@@ -232,7 +233,7 @@ class SKLogger:
     def log_search_results(self, query: str, results: list, success: bool = True):
         """
         Log web search results from Tavily
-        
+
         Args:
             query: Search query string
             results: List of search results
@@ -240,16 +241,16 @@ class SKLogger:
         """
         self.section("WEB SEARCH RESULTS")
         self._log(LogLevel.INFO, f"🔍 Query: {query}")
-        
+
         if not success:
             self._log(LogLevel.ERROR, "❌ Search failed")
             return
-            
+
         for idx, result in enumerate(results, 1):
-            title = result.get('title', 'No title')
-            url = result.get('url', 'No URL')
-            snippet = result.get('snippet', 'No snippet available')
-            
+            title = result.get("title", "No title")
+            url = result.get("url", "No URL")
+            snippet = result.get("snippet", "No snippet available")
+
             self._log(LogLevel.INFO, f"\n🌐 Result {idx}:")
             self._log(LogLevel.INFO, f"Title: {title}")
             self._log(LogLevel.INFO, f"URL: {url}")

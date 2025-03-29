@@ -1,9 +1,12 @@
-from typing import Optional, List
+import platform
 import subprocess
 import sys
-import platform
+from typing import List, Optional
+
 from semantic_kernel.functions import kernel_function
+
 from semantic_kernel_plugins.logger.sk_logger import SKLogger
+
 
 class ShellPlugin:
     def __init__(self):
@@ -30,18 +33,17 @@ class ShellPlugin:
                     shell = True
                 else:
                     args = args.split()
-                
 
             run_args = {
                 "capture_output": True,
                 "text": True,
                 "encoding": "utf-8",
                 "errors": "replace",
-                "shell": shell
+                "shell": shell,
             }
 
             self.logger.info(f"Executing shell command: {args}")
-            
+
             if self.os_type == "windows":
                 startupinfo = subprocess.STARTUPINFO()
                 startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
@@ -56,5 +58,3 @@ class ShellPlugin:
             error_msg = f"Error executing command: {str(e)}"
             self.logger.error(error_msg)
             return error_msg
-
-    

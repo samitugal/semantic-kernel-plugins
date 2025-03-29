@@ -12,7 +12,8 @@ from semantic_kernel.contents.chat_history import ChatHistory
 from semantic_kernel.functions import kernel_function
 
 from semantic_kernel_plugins.logger.sk_logger import LogLevel, SKLogger
-from semantic_kernel_plugins.tools.python_executor import ExecutePythonCodePlugin
+from semantic_kernel_plugins.tools.python_executor import \
+    ExecutePythonCodePlugin
 
 
 class PythonCodeGeneratorPlugin:
